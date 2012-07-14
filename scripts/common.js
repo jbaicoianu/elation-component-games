@@ -15,19 +15,30 @@ elation.extend("games.common", {
       console.log(this);
     }
     this.createBoard = function() {
-      this.element = document.createElement("TABLE");
+      this.element = document.createElement("div");
       this.element.className = "game_board" + (this.options.className ? " " + this.options.className : "");
-      this.element.cellSpacing = 1;
+      //this.element.cellSpacing = 1;
+
+      if (this.options.innerboard) {
+        var innerboard = elation.html.create({type: 'div', classname: 'game_board_inner'});
+        this.element.appendChild(innerboard);
+      }
+
       for (var i = 0; i < this.size[1]; i++) {
         this.slots[i] = [];
-        var row = document.createElement("TR");
+        var row = document.createElement("div");
+        elation.html.addclass(row, "game_board_row");
         for (var j = 0; j < this.size[0]; j++) {
-          this.slots[i][j] = new elation.games.common.boardslot(row, {board: this, type: this.getTileType(i, j, this.size[0])});
+          this.slots[i][j] = new elation.games.common.boardslot(row, {row: i, col: j, board: this, type: this.getTileType(i, j, this.size[0])});
         }
         this.element.appendChild(row);
       }
       this.container.appendChild(this.element);
-      this.tilesize = [this.slots[0][0].element.offsetWidth + parseInt(this.element.cellSpacing), this.slots[0][0].element.offsetHeight + parseInt(this.element.cellSpacing)];
+      this.tilesize = [this.slots[0][0].element.offsetWidth, this.slots[0][0].element.offsetHeight];
+      if (this.element.cellSpacing) {
+        this.tilesize[0] += parseInt(this.element.cellSpacing);
+        this.tilesize[1] += parseInt(this.element.cellSpacing);
+      }
       console.log(this.tilesize);
     }
     this.getTileType = function(row, col, totalsize) {
@@ -45,13 +56,25 @@ elation.extend("games.common", {
       }
       return ret;
     }
-    this.getSlot = function(x, y) {
+    this.setTileType = function(row, col, type) {
+      this.slots[row][col].setType(type);
+    }
+    this.getSlot = function(row, col) {
+      if (this.slots[row] && this.slots[row][col]) {
+        return this.slots[row][col];
+      }
+      return false;
+    }
+    this.getSlotFromPosition = function(x, y) {
       var pos = elation.html.position(this.element);
       var size = elation.html.size(this.element);
       if ((x > pos[0] && x < pos[0] + size[0]) && (y > pos[1] && y < pos[1] + size[1])) {
         var tilepos = [Math.floor((x - pos[0]) / this.tilesize[0]), Math.floor((y - pos[1]) / this.tilesize[1])];
-        return this.slots[tilepos[1]][tilepos[0]];
+        if (this.slots[tilepos[1]] && this.slots[tilepos[1]][tilepos[0]]) {
+          return this.slots[tilepos[1]][tilepos[0]];
+        }
       }
+      return false;
     }
     this.init();
   },
@@ -61,12 +84,49 @@ elation.extend("games.common", {
 
     this.init = function() {
       this.type = this.options.type || 'normal'; 
-      this.element = document.createElement("TD");
+      this.row = this.options.row;
+      this.col = this.options.col;
+      this.element = document.createElement("div");
       this.element.className = 'game_boardslot game_boardslot_' + this.type;
       this.container.appendChild(this.element);
+      this.occupied = false;
+      this.pieces = [];
 
       elation.events.add(this.element, "dragenter,dragover,dragleave,dragend,drop", this);
     }
+    this.setType = function(type) {
+      var oldtype = this.type;
+      elation.html.removeclass(this.element, "game_boardslot_" + oldtype);
+      this.type = type;
+      elation.html.addclass(this.element, "game_boardslot_" + type);
+    }
+    this.addClass = function(classname) {
+      elation.html.addclass(this.element, classname);
+    }
+    this.removeClass = function(classname) {
+      elation.html.removeclass(this.element, classname);
+    }
+    this.addPiece = function(piece) {
+      if (!this.hasPiece(piece)) {
+        this.pieces.push(piece);
+        this.occupied = (this.pieces.length > 0);
+        return true;
+      }
+      return false;
+    }
+    this.hasPiece = function(piece) {
+      return (this.pieces.indexOf(piece) != -1);
+    }
+    this.removePiece = function(piece) {
+      var idx = this.pieces.indexOf(piece);
+      if (idx != -1) {
+        this.pieces.splice(idx, 1);
+        this.occupied = (this.pieces.length > 0);
+        return true;
+      }
+      return false;
+    }
+    
     this.handleEvent = function(ev) {
         switch(ev.type) {
           case 'dragenter':
