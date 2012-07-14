@@ -1,24 +1,236 @@
+body {
+  min-height: 40em;
+  background: #3f464f url(/images/games/random_grey_variations.png);
+  overflow: hidden;
+}
+#container {
+  text-align: center;
+}
 #container * {
   -webkit-user-select: none;
 }
 
+#container.schess_3d {
+  -webkit-perspective: 800px;
+  -moz-perspective: 800px;
+  -webkit-transform-style: preserve-3d;
+}
+#container.schess_3d * {
+  -moz-transform-style: preserve-3d;
+}
+#container.schess_3d .game_board {
+  position: relative;
+  -moz-perspective: 800px;
+  -webkit-transform: rotate3d(1, 0, 0, 50deg);
+  -webkit-transform-style: preserve-3d;
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform: rotate3d(1, 0, 0, 50deg);
+  -moz-transform-style: preserve-3d;
+  -moz-transform-origin: 50% 50%;
+}
+#container.schess_3d .game_board:before,
+#container.schess_3d .game_board:after,
+#container.schess_3d .game_board .game_board_inner:before,
+#container.schess_3d .game_board .game_board_inner:after {
+  content: ' ';
+  position: absolute;
+  display: block;
+  height: 2%;
+  width: 100%;
+  background: #333;
+  -webkit-transform-origin: 50% 0;
+  -webkit-transform: rotate3d(1, 0, 0, -90deg);
+  -moz-transform-origin: 50% 0;
+  -moz-transform: rotate3d(1, 0, 0, -90deg);
+}
+#container.schess_3d .game_board .game_board_inner:after {
+  bottom: -2%;
+}
+#container.schess_3d .game_piece {
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-origin: 50% 100%;
+  -webkit-transform: rotate3d(1, 0, 0, -90deg);
+  -moz-transform-origin: 50% 100%;
+  -moz-transform: rotate3d(1, 0, 0, -90deg);
+}
+
+#container {
+}
 .game_board {
-  margin: 2em auto;
+  display: inline-block;
+  margin: 0 auto;
   background: #ccc;
-  border: 2px solid black;
   font-size: 16px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
 }
+.game_board .game_board_inner {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  display: inline-block;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transform: rotateZ(90deg);
+  -moz-transform: rotateZ(90deg);
+  -ie-transform: rotateZ(90deg);
+  -o-transform: rotateZ(90deg);
+  transform: rotateZ(90deg);
+}
 
+.game_board .game_board_row {
+  white-space: nowrap;
+  line-height: 0;
+}
+.game_board .game_board_row:after {
+  display: block;
+  content: ' ';
+  clear: both;
+  height: 0;
+  visibility: hidden;
+}
 .game_board .game_boardslot {
-  border: 1px solid black;
+  display: block;
+  float: left;
   background: white;
-  padding: 0;
+  margin: 0px;
+  padding: 0px;
   border-spacing: 0;
+  border-radius: 0;
   width: 35px;
   height: 35px;
-  line-height: 1em;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
+  line-height: 0;
+}
+#container .game_board .game_boardslot.state_hover {
+  background: rgba(255,200,200,.5);
+}
+
+.game_board .game_boardslot.game_boardslot_white {
+  background: #ddd url(/images/games/marble-white.jpg);
+}
+.game_board .game_boardslot.game_boardslot_black {
+  background: #222 url(/images/games/marble-black.jpg);
+}
+.game_board .game_boardslot:hover {
+  background: rgba(255,255,0,.2);
+}
+#container .game_board .game_boardslot.state_legal {
+  background: rgba(200,200,255,.5);
+}
+#container .game_board .game_boardslot.state_legal.state_hover {
+  background: rgba(200,255,200,.5);
+}
+#container .game_board .game_boardslot.state_check {
+  background: rgba(255,0,0,.5);
+}
+#container .game_board .game_boardslot.state_check.state_mate .game_piece.schess_player_white:after {
+  color: #fcc;
+}
+#container .game_board .game_boardslot.state_check.state_mate .game_piece.schess_player_black:after {
+  color: #600;
+}
+
+/* game pieces */
+.game_piece {
+  margin: 1px;
+  padding: 1px;
+}
+.game_piece:hover {
+  background: rgba(255,200,200,.5);
+}
+
+.game_piece:after {
+  font-size: 35px;
+  line-height: 100%;
+  text-align: center;
+  text-shadow: white 0 0 5px
+}
+.game_piece.schess_piece_king:after {
+  content: '♚';
+}
+.game_piece.schess_piece_queen:after {
+  content: '♛';
+}
+.game_piece.schess_piece_bishop:after {
+  content: '♝';
+}
+.game_piece.schess_piece_rook:after {
+  content: '♜';
+}
+.game_piece.schess_piece_knight:after {
+  content: '♞';
+}
+.game_piece.schess_piece_pawn:after {
+  content: '♟';
+}
+
+/* white player */
+.game_piece.schess_player_white:after {
+  color: white;
+  text-shadow: black 0 0 5px
+}
+/* black player */
+.game_piece.schess_player_black:after {
+  color: black;
+  text-shadow: white 0 0 5px
+}
+
+/* size adjustments */
+
+@media all and (max-width: 300px) {
+  .game_board {
+    width: 160px;
+    height: 160px;
+  }
+  .game_board .game_boardslot {
+    width: 20px;
+    height: 20px;
+  }
+  .game_piece:after {
+    font-size: 20px;
+  }
+}
+@media all and (min-width: 300px) and (max-width: 420px) {
+  .game_board {
+    width: 280px;
+    height: 280px;
+  }
+  .game_board .game_boardslot {
+    width: 35px;
+    height: 35px;
+  }
+  .game_piece:after {
+    font-size: 35px;
+  }
+}
+@media all and (min-width: 560px) and (max-width: 880px) {
+  .game_board {
+    width: 480px;
+    height: 480px;
+  }
+  .game_board .game_boardslot {
+    width: 60px;
+    height: 60px;
+  }
+  .game_piece:after {
+    font-size: 60px;
+  }
+}
+
+@media all and (min-width: 880px) {
+  .game_board {
+    width: 720px;
+    height: 720px;
+  }
+  .game_board .game_boardslot {
+    width: 90px;
+    height: 90px;
+  }
+  .game_piece:after {
+    font-size: 90px;
+  }
 }
