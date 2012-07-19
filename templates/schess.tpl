@@ -1,4 +1,4 @@
-{dependency name="games.schess-engine-p4wn"}
+{dependency name="games.schess_engine_p4wn"}
 {dependency name="games.schess"}
 {dependency name="games.common"}
 

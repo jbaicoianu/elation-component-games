@@ -1,3 +1,4 @@
+/*
 body {
   min-height: 40em;
   background: #3f464f url(/images/games/random_grey_variations.png);
@@ -9,6 +10,7 @@ body {
 #container * {
   -webkit-user-select: none;
 }
+*/
 
 #container.schess_3d {
   -webkit-perspective: 800px;
@@ -17,6 +19,7 @@ body {
 }
 #container.schess_3d * {
   -moz-transform-style: preserve-3d;
+  -webkit-user-select: none;
 }
 #container.schess_3d .game_board {
   position: relative;
