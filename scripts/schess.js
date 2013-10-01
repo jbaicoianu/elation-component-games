@@ -56,7 +56,7 @@ elation.extend("games.schess", {
       this.viewangle = [0, 60];
       this.setViewAngle(this.viewangle);
       elation.html.addclass(this.container, "schess_3d");
-      elation.events.add(document.body, 'mousedown,touchstart', this);
+      elation.events.add(this.container, 'mousedown,touchstart', this);
 
       elation.onloads.add(function() {
         setTimeout(function() { // iPhone scroll
